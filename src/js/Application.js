@@ -10,11 +10,14 @@ export default class Application extends EventEmitter {
 
   constructor() {
     super();
-_loading=document.createElement('progress');
+    _loading=document.body.querySelector('.progress');
     _load=async function(){
+      _startLoading();
     const call=await fetch('https://swapi.boom.dev/api/planets');
-     const planets=await call.response;
-      planets=planets.results;
+    const planets=await call.json();
+      if(call.ok){_stopLoading();}
+    planets=planets.results;
+      _create(planets);
       
     };
     _create=(items)=>{
@@ -27,15 +30,16 @@ _loading=document.createElement('progress');
       terrain:elem.terrain ,
       population: elem.population,
     });
-    
+     document.body.querySelector(".main").appendChild(box);
     })
     };
-    _startLoading=()=>{};
-    _stopLoading=()=>{};
+    _startLoading=()=>{
+    _loading.style.visibility='visible';
+    };
+    _stopLoading=()=>{
+    _loading.style.visibility='hidden';
+    };
     
-
-    document.body.querySelector(".main").appendChild(box);
-
 
     this.emit(Application.events.READY);
   }
